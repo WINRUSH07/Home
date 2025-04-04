@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Reaction Game</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen p-4">
+  <h1 class="text-2xl font-bold text-pink-400 mb-4">⚡ Reflex Rush</h1>
+  <p class="mb-4">Click the screen as fast as you can when it turns <span class="text-green-400">green</span>!</p>
+
+  <div id="gameBox" class="w-96 h-64 bg-red-600 rounded-lg flex justify-center items-center text-xl font-bold cursor-pointer">
+    Wait for Green...
+  </div>
+
+  <p class="mt-4">Your Time: <span id="result" class="text-yellow-300 font-bold">0 ms</span></p>
+
+  <script>
+    let gameBox = document.getElementById("gameBox");
+    let result = document.getElementById("result");
+    let startTime = null;
+    let timeout;
+    let gameActive = false;
+
+    function startGame() {
+      gameActive = true;
+      gameBox.style.backgroundColor = "red";
+      gameBox.innerText = "Wait for Green...";
+      result.innerText = "0 ms";
+      startTime = null;
+
+      const randomDelay = Math.random() * 3000 + 2000;
+      timeout = setTimeout(() => {
+        startTime = new Date().getTime();
+        gameBox.style.backgroundColor = "green";
+        gameBox.innerText = "Click!";
+      }, randomDelay);
+    }
+
+    gameBox.onclick = function () {
+      if (!gameActive) {
+        startGame();
+        return;
+      }
+
+      if (!startTime) {
+        clearTimeout(timeout);
+        gameBox.innerText = "Too Soon!";
+        gameBox.style.backgroundColor = "gray";
+        gameActive = false;
+      } else {
+        const reactionTime = new Date().getTime() - startTime;
+        result.innerText = `${reactionTime} ms`;
+        gameBox.innerText = "Play Again";
+        gameBox.style.backgroundColor = "blue";
+        saveScore(reactionTime);
+        gameActive = false;
+      }
+    };
+
+    function saveScore(time) {
+      const user = JSON.parse(localStorage.getItem("loggedInUser"));
+      if (!user) return;
+
+      const points = Math.max(0, 500 - time); // lower time = higher score
+      const scores = JSON.parse(localStorage.getItem("weekly_league_scores")) || [];
+      const existing = scores.find(u => u.email === user.email);
+      if (existing) {
+        existing.score += points;
+      } else {
+        scores.push({ name: user.name, email: user.email, score: points });
+      }
+      localStorage.setItem("weekly_league_scores", JSON.stringify(scores));
+    }
+
+    startGame();
+  </script>
+</body>
+</html>

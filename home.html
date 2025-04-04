@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Home</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-8">
+  <h1 class="text-4xl font-bold text-yellow-400 text-center mb-10">🏆 Game Leagues</h1>
+
+  <!-- Top Box: Shows total earnings for the currently logged-in user -->
+  <div id="totalEarningsBox" class="bg-yellow-500 text-black text-xl font-bold p-4 rounded-lg text-center mb-6">
+    💰 Your Total Earnings: ₹<span id="totalEarnings">0</span>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+    <!-- Hourly League -->
+    <div onclick="goToLeague('hourly.html')" class="cursor-pointer bg-gray-800 hover:bg-gray-700 p-6 rounded-xl text-center transition-all">
+      <h2 class="text-xl font-bold text-yellow-300 mb-2">⏰ Hourly League</h2>
+      <p class="text-sm text-gray-400">Compete every hour for top scores!</p>
+      <button class="mt-4 bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded font-bold">
+        coming soon
+      </button>
+    </div>
+
+    <!-- Daily League -->
+    <div onclick="goToLeague('daily.html')" class="cursor-pointer bg-gray-800 hover:bg-gray-700 p-6 rounded-xl text-center transition-all">
+      <h2 class="text-xl font-bold text-yellow-300 mb-2">📅 Daily League</h2>
+      <p class="text-sm text-gray-400">Battle it out daily with new games!</p>
+      <button class="mt-4 bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded font-bold">
+        Coming soon
+      </button>
+    </div>
+
+    <!-- ads -->
+
+  <script type='text/javascript' src='//pl26246844.effectiveratecpm.com/65/e7/17/65e717c59d104c368634e718702f7211.js'></script>
+
+  <!-- ---------------------------------- -->
+
+    <!-- Weekly League -->
+    <div onclick="goToLeague('weekly.html')" class="cursor-pointer bg-gray-800 hover:bg-gray-700 p-6 rounded-xl text-center transition-all">
+      <h2 class="text-xl font-bold text-yellow-300 mb-2">🗓️ Weekly League</h2>
+      <p class="text-sm text-gray-400">Climb to the top every week!</p>
+      <button class="mt-4 bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded font-bold">
+        Enter
+      </button>
+    </div>
+
+    <!-- Monthly League -->
+    <div onclick="goToLeague('monthly.html')" class="cursor-pointer bg-gray-800 hover:bg-gray-700 p-6 rounded-xl text-center transition-all">
+      <h2 class="text-xl font-bold text-yellow-300 mb-2">📆 Monthly League</h2>
+      <p class="text-sm text-gray-400">Be the monthly champion!</p>
+      <button class="mt-4 bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded font-bold">
+        Enter
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function goToLeague(page) {
+      window.location.href = page;
+    }
+
+    // Updated: Show only the logged-in user's total earnings
+    function updateTotalEarnings() {
+      const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+      if (!loggedInUser || !loggedInUser.email) {
+        document.getElementById("totalEarnings").innerText = "0";
+        return;
+      }
+      
+      let total = 0;
+      const leagues = ["hourly_league_scores", "daily_league_scores", "weekly_league_scores", "monthly_league_scores"];
+      
+      leagues.forEach(leagueKey => {
+        const leagueData = JSON.parse(localStorage.getItem(leagueKey)) || [];
+        // Find the record for the logged-in user
+        const userRecord = leagueData.find(user => user.email === loggedInUser.email);
+        if (userRecord && userRecord.earnings) {
+          total += userRecord.earnings;
+        }
+      });
+      
+      document.getElementById("totalEarnings").innerText = total;
+    }
+
+    // Run updateTotalEarnings when page loads
+    updateTotalEarnings();
+  </script>
+</body>
+</html>

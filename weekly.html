@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Weekly League</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .hidden { display: none; }
+    iframe { width: 100%; height: 600px; }
+  </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-6">
+
+  <h1 class="text-3xl text-yellow-400 font-bold mb-6 text-center">🏆 Weekly League</h1>
+
+  <div class="flex justify-center gap-4 mb-6">
+    <button onclick="showGame('math')" class="bg-green-500 px-6 py-2 rounded-lg font-bold hover:bg-green-600">🧠 Math Quiz</button>
+    <button onclick="showGame('reaction')" class="bg-pink-500 px-6 py-2 rounded-lg font-bold hover:bg-pink-600">⚡ Reaction Speed</button>
+
+    <button onclick="toggleScoreboard()" class="bg-blue-500 px-6 py-2 rounded-lg font-bold hover:bg-blue-600">📊 Scoreboard</button>
+   
+
+  </div>
+  
+
+  <!-- Game Container -->
+  <div id="gameContainer" class="bg-gray-800 p-6 rounded-xl max-w-4xl mx-auto hidden">
+    <h2 id="gameTitle" class="text-2xl font-bold text-yellow-300 mb-4">Game Title</h2>
+    <iframe id="gameFrame" src=""></iframe>
+  </div>
+
+  <!-- Scoreboard Container -->
+  <div id="scoreboard" class="bg-gray-800 p-6 rounded-xl max-w-2xl mx-auto mt-6 hidden">
+    <h2 class="text-2xl text-yellow-400 font-bold mb-4">📊 Leaderboard</h2>
+    <ul id="leaderboardList" class="space-y-2 text-left"></ul>
+  </div>
+
+  <script>
+    function showGame(game) {
+      document.getElementById("scoreboard").classList.add("hidden");
+      document.getElementById("gameContainer").classList.remove("hidden");
+
+      let title = "";
+      let file = "";
+
+      if (game === "math") {
+  title = "🧠 Brain Blaster: Math Mastery";
+  file = "math-weekly.html";
+} else if (game === "reaction") {
+  title = "⚡ Reflex Rush: Reaction Speed Test";
+  file = "reaction-weekly.html";
+}
+
+
+
+      document.getElementById("gameTitle").innerText = title;
+      document.getElementById("gameFrame").src = file;
+    }
+
+    function distributeEarnings(totalEarnings) {
+    let scores = JSON.parse(localStorage.getItem("weekly_league_scores")) || [];
+
+    if (scores.length === 0) {
+        alert("No players to distribute earnings!");
+        return;
+    }
+
+    // Sort by highest score
+    scores.sort((a, b) => b.score - a.score);
+
+    // Fixed distribution pattern
+    let distribution = [];
+    let remainingAmount = totalEarnings;
+    let i = 0;
+
+    scores.forEach(user => user.earnings = 0); // Reset previous earnings
+
+    // for (let user of scores) {
+    //     if (remainingAmount <= 0) break; // Stop if no more money to give
+
+    //     let amount = distribution[i] || 10; // After 5th rank, give ₹10 to each
+    //     if (remainingAmount < amount) amount = remainingAmount; // Avoid exceeding total earnings
+        
+    //     user.earnings = amount;
+    //     remainingAmount -= amount;
+    //     i++;
+    // }
+
+    localStorage.setItem("weekly_league_scores", JSON.stringify(scores));
+    alert("Earnings distributed successfully!");
+}
+
+// Example: Call this when admin enters total earnings (₹1000)
+distributeEarnings(1000);
+
+
+function toggleScoreboard() {
+    const scores = JSON.parse(localStorage.getItem("weekly_league_scores")) || [];
+    const leaderboard = document.getElementById("leaderboardList");
+    leaderboard.innerHTML = "";
+
+    scores.sort((a, b) => b.score - a.score);
+    scores.forEach((user, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<strong>#${index + 1}</strong> ${user.name} - 
+            <span class="text-yellow-300">${user.score} pts</span> | 
+            💰 ₹${user.earnings}`;
+        leaderboard.appendChild(li);
+    });
+
+    document.getElementById("gameContainer").classList.add("hidden");
+    document.getElementById("scoreboard").classList.remove("hidden");
+}
+
+  </script>
+</body>
+</html>

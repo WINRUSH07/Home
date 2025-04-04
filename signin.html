@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sign In</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white flex justify-center items-center min-h-screen px-4">
+  <div class="bg-gray-800 p-8 rounded-xl w-full max-w-md">
+    <h2 class="text-yellow-400 text-3xl font-bold mb-6 text-center">Sign In</h2>
+    <form onsubmit="return handleSignIn(event)" class="space-y-5">
+      <input id="email" type="email" placeholder="Email" required class="w-full px-4 py-2 bg-gray-700 rounded" />
+      <input id="password" type="password" placeholder="Password" required class="w-full px-4 py-2 bg-gray-700 rounded mb-4" />
+
+      <button type="submit" class="bg-yellow-400 text-black py-2 rounded w-full font-bold hover:bg-yellow-500">
+        Sign In
+      </button>
+    </form>
+
+    <p class="text-sm text-gray-400 text-center mt-4">
+      Don't have an account?
+      <a href="signup.html" class="text-yellow-300 hover:underline">Sign Up</a>
+    </p>
+  </div>
+
+  <script>
+    function handleSignIn(event) {
+      event.preventDefault();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      const storedUser = localStorage.getItem(email);
+      if (!storedUser) {
+        alert("❌ No account found with this email.");
+        return false;
+      }
+
+      const user = JSON.parse(storedUser);
+      if (user.password !== password) {
+        alert("❌ Incorrect password.");
+        return false;
+      }
+
+      // Store logged-in user info
+      localStorage.setItem("loggedInUser", JSON.stringify(user));
+
+      alert(`✅ Welcome back, ${user.name}! Redirecting to Home...`);
+      window.location.href = "home.html"; // Redirect to home page
+    }
+  </script>
+</body>
+</html>
